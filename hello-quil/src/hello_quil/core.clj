@@ -1,6 +1,25 @@
 (ns hello-quil.core
   (:require [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m]
+			[hello-quil.p]
+			[hello-quil.tweet-connection :as tweet]
+			[cheshire.core :refer :all]))
+
+; setup connection to tweets
+
+(def tweets (atom [{:text ""}]))
+
+(defn tweet-handler
+  [http-body]
+  (let [tweet (parse-string http-body keyword)]
+   (if (not (contains? @tweets tweet))
+	 (do
+	 	(swap! tweets conj tweet)
+	   	(if (> (count @tweets) 4) (swap! tweets subvec 1))))))
+
+(def connection (tweet/connect-tweet-server 4000 tweet-handler))
+
+;(tweet/stop-connection connection)
 
 (defn setup []
   ; Set frame rate to 30 frames per second.
@@ -15,7 +34,8 @@
 (defn update [state]
   ; Update sketch state by changing circle color and position.
   {:color (mod (+ (:color state) 0.7) 255)
-   :angle (+ (:angle state) 0.1)})
+   :angle (+ (:angle state) 0.1)
+   :latest-tweet-message ((comp :text last) @tweets)})
 
 (defn draw [state]
   ; Clear the sketch by filling it with light-grey color.
@@ -25,12 +45,14 @@
   ; Calculate x and y coordinates of the circle.
   (let [angle (:angle state)
         x (* 150 (q/cos angle))
-        y (* 150 (q/sin angle))]
+        y (* 150 (q/sin angle))
+		half-width (/ (q/width) 2)
+		half-height (/ (q/height) 2)]
     ; Move origin point to the center of the sketch.
-    (q/with-translation [(/ (q/width) 2)
-                         (/ (q/height) 2)]
+    (q/with-translation [half-width half-height]
       ; Draw the circle.
-      (q/ellipse x y 100 100))))
+      (q/ellipse x y 50 100)
+	  (q/text (:latest-tweet-message state) 0 0))))
 
 (q/defsketch hello-quil
   :title "You spin my circle right round"
