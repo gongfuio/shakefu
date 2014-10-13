@@ -4,7 +4,7 @@
 
 ;(clojure.core/use '[clojure.repl :only (doc)])
 
-(def ^:private tweet-server-url "http://nomethod.ch:3000/tweet")
+(def ^:private tweet-server-url "http://nomethod.ch:3000/tweetFull")
 
 (defn ^:private get-tweet
   ; async http call
@@ -18,16 +18,18 @@
 
 ; setup at-at
 
-(def ^:private my-pool (at-at/mk-pool)) ; should this be injected into the module?
+;(def ^:private my-pool (at-at/mk-pool)) ; should this be injected into the module?
+
+
 
 (defn connect-tweet-server
 "returns an overtone.at-at scheduler calling the tweet server
 at given intervals
 rate -> interval in ms between each calls"
-  ([rate success-handler]
-   (connect-tweet-server rate success-handler (fn[e]())))
-  ([rate success-handler error-handler]
-  (at-at/every rate #(get-tweet success-handler error-handler) my-pool)))
+  ([at-at-pool rate success-handler]
+   (connect-tweet-server at-at-pool rate success-handler (fn[e]())))
+  ([at-at-pool rate success-handler error-handler]
+  (at-at/every rate #(get-tweet success-handler error-handler) at-at-pool)))
 
 (defn stop-connection
   [connection]
