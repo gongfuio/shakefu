@@ -9,10 +9,11 @@
 ; pool of threads for at-at
 (def thread-pool (at-at/mk-pool))
 
-; tweets is a sliding queue of tweets
-(def tweets (atom []))
 
 ; setup connection to tweets
+; tweets are stored in a queue
+(def tweets (atom []))
+
 (defn tweet-handler
   [http-body]
   (let [tweet (parse-string http-body keyword)
@@ -27,29 +28,32 @@
 ;(tweet/stop-connection connection)
 
 
-; setup state for the current tweet to be displayed
-;
+; setup state for the tweet to be displayed by quil
+; this tweet is updated every n seconds with at-at schedule
 (def tweet (atom {:id_str ""
-				  :text ""
-				  :profile-image-url nil}))
-
+				          :text ""
+				          :profile-image-url nil}))
 
 (defn update-tweet
   []
   (let [latest-tweet (last @tweets)
 		profile-image-url #(-> % :user :profile_image_url)]
-	(if (not (= (:id_str latest-tweet) (:id_str @tweet)))
-	  (reset! tweet {
-					 :id_str (:id_str latest-tweet)
-					 :text (:text latest-tweet)
-					 :profile-image-url (profile-image-url latest-tweet)
-					}))))
+	  (if (not (= (:id_str latest-tweet) (:id_str @tweet))); only update if there is a new tweet (not smart)
+	    (reset! tweet {
+					           :id_str (:id_str latest-tweet)
+					           :text (:text latest-tweet)
+					           :profile-image-url (profile-image-url latest-tweet)}))))
 
 (def update-tweet-schedule (at-at/every 8000 update-tweet thread-pool))
 
 ;(at-at/stop update-tweet-schedule)
 
 @tweet
+
+(defn image-available?
+  "checks if requested PImage is available"
+  [pImage]
+  (and (not (nil? pImage)) (> (.height pImage) 0)))
 
 (defn setup []
   ; Set frame rate to 30 frames per second.
@@ -72,7 +76,7 @@
    :angle (+ (:angle state) 0.1)
    :old_id_str (if should-update-tweet new_id_str old_id_str)
    :text (:text @tweet)
-   :profile-image (if should-update-tweet (-> @tweet :profile-image-url q/load-image) (:profile-image state))}))
+   :profile-image (if should-update-tweet (-> @tweet :profile-image-url q/request-image) (:profile-image state))}))
 
 (defn draw [state]
   ; Clear the sketch by filling it with light-grey color.
@@ -89,11 +93,14 @@
     (q/with-translation [half-width half-height]
       ; Draw the circle.
       (q/ellipse x y 100 100)))
-  (q/text (:text state) 50 0 200 800)
-  (when-let [profile-image (:profile-image state)] (q/image profile-image 0 0)))
+  ; draw text from tweet
+  (when-let [text (:text state)] (q/text text 50 0 200 800))
+  ; draw profile-image
+  (let [profile-image (:profile-image state)]
+    (if (image-available? profile-image) (q/image profile-image 0 0))))
 
 (q/defsketch hello-quil
-  :title "You spin my circle right round"
+  :title "tweet display hello world"
   :size [500 500]
   ; setup function called only once, during sketch initialization.
   :setup setup
