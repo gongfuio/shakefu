@@ -12,6 +12,8 @@ Chacun·e est invité à nous rejoindre:
 
 Ce repository contient les sources du projet [Clojure](http://clojuredocs.org/quickref) et [Processing/Quil](https://github.com/quil/quil) que nous développerons pendant cette session. Il s'agit d'une visualisation des tweets `@SoftShakeEvent` relatifs à la conférence, dans un esprit expérimental et ludique.
 
+Aucune connaissance préalable de Clojure ou de Processing ne sont requises pour participer à la session de live-coding. Si vous voulez participer avec votre ordinateur, voyez ci-après.
+
 ## Pour monter à bord de la session de «live-coding»
 
 Créez un compte Floobits et rendez-vous à:
