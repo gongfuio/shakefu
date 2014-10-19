@@ -8,7 +8,7 @@ Ce repository contient les sources du projet [Clojure](http://clojuredocs.org/qu
 
 Créez un compte Floobits et rendez-vous à:
 
-[www.floobits.com/gongfuio/shakefu](www.floobits.com/gongfuio/shakefu)
+[www.floobits.com/gongfuio/shakefu](https://floobits.com/gongfuio/shakefu)
 
 Dans le menu _Collaborate_, cliquez sur _Follow changes_. L’interface web de Floobits vous permet de participer immédiatement à la rédaction collaborative du code.
 
