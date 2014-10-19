@@ -1,10 +1,18 @@
-# Shake-fu · ‹Gōng-fu I/O› meets ‹Soft-Shake›
+# Shake-fu
+
+## ‹Gōng-fu I/O› meets ‹Soft-Shake›.
 
 Shake-fu est une session continue de _live coding_, qui a lieu les 23 et 24 octobre 2014 pendant la conférence [Soft-Shake 2014](http://soft-shake.ch/2014/fr/), dans la mezzanine, au-dessus du hall central, à l'HEPIA à Genève.
 
-Ce repository contient les sources du projet [Clojure](http://clojuredocs.org/quickref) et [Processing/Quil](https://github.com/quil/quil) développé pendant cette session. Il s'agit d'une visualisation des tweets `@SoftShakeEvent` relatifs à la conférence, dans un esprit expérimental et ludique.
+Chacun·e est invité à nous rejoindre:
 
-## Pour monter à bord
+* pour participer à un atelier animé par un orateur de Soft-Shake, pour prolonger un sujet par un volet pratique;
+* ou pour explorer un sujet d'intérêt personnel à la suite d'une conférence;
+* ou pour participer à la session continue Clojure/Processing que nous animerons.
+
+Ce repository contient les sources du projet [Clojure](http://clojuredocs.org/quickref) et [Processing/Quil](https://github.com/quil/quil) que nous développerons pendant cette session. Il s'agit d'une visualisation des tweets `@SoftShakeEvent` relatifs à la conférence, dans un esprit expérimental et ludique.
+
+## Pour monter à bord de la session de «live-coding»
 
 Créez un compte Floobits et rendez-vous à:
 
