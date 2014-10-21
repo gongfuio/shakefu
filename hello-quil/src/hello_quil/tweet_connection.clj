@@ -1,5 +1,6 @@
 (ns hello-quil.tweet-connection
   (:require [org.httpkit.client :as http]
+			[cheshire.core :as cheshire]
 			[overtone.at-at :as at-at]))
 
 ;(clojure.core/use '[clojure.repl :only (doc)])
@@ -13,7 +14,7 @@
           (fn [{:keys [status headers body error]}] ;; asynchronous response handling
             (if error
               (error-handler error)
-              (sucess-handler body)))))
+              (sucess-handler (cheshire/parse-string body keyword))))))
 
 
 ; setup at-at
