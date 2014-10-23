@@ -6,14 +6,14 @@
   [x y width height]
   (q/with-translation [x y]
 	(let [half-w (/ width 2)
-		  half-tail 20]
+		  tail-size 20]
   		(q/begin-shape)
   		(q/vertex 0 0)
   		(q/vertex width 0)
 		(q/vertex width height)
-		(q/vertex (+ half-w half-tail) height)
-		(q/vertex half-w (+ height half-tail))
-		(q/vertex (- half-w half-tail) height)
+		(q/vertex (+ half-w tail-size) height)
+		(q/vertex half-w (+ height tail-size))
+		(q/vertex (- half-w tail-size) height)
   		(q/vertex 0 height)
 	  	(q/end-shape :close))))
 
@@ -32,40 +32,30 @@
 	   (q/text text 0 0 width height))
 	 sprite))
 
-; 	// computes text height (measured in pixels)
-;    // set textHeight to 0
-;    // iterate backwards starting at the end of the pixel buffer
-;    // at each step:
-;    // 1. get alpha of pixel
-;    // 2. break if alpha > 28  and set textHeight = current index / buffer.width
-;    private void computeTextHeight(){
-;        m_buffer.loadPixels();
-;        m_textHeight = 0;
-;        // start from end and find first instance of alpha == 255
-;        for (int i = m_buffer.pixels.length -1; i >= 0; --i) {
-;            int a = (m_buffer.pixels[i] >> 24) & 0xFF;
-;
-;            if (a > 28){
-;                m_textHeight = i / m_buffer.width;
-;                break;
-;            }
-;        }
-;    }
 
 (defn text-height
-  "computes text height (pixels) given a PGraphics (sprite)"
+  "computes text height (pixels) given a PGraphics (sprite)
+  in which text has been written"
   [sprite]
   (let [pixels-array (q/pixels sprite)
 		pixel-count (count pixels-array)
 		sprite-width (.width sprite)
 		extract-alpha #(bit-and (bit-shift-right % 24) 0xff)
+		divide-by #(/ %2 %) ; flip arguments for arrow macro
 		alphas (map extract-alpha (reverse pixels-array))]
-	(int(/ (- pixel-count (count (take-while #(< % 28) alphas))) sprite-width))))
+	(->> alphas
+	 (take-while #(< % 28))
+	 count
+	 (- pixel-count)
+	 (divide-by sprite-width)
+	 int)))
+
 
 (defn divide
   [w c]
   (/ c w))
 
+(def divide-by #(/ %2 %))
 (let [alphas [0 0 4]
 	  pixel-count 7
 	  sprite-width 2]
@@ -73,7 +63,7 @@
 	 (take-while #(< % 28))
 	 count
 	 (- pixel-count)
-	 (divide sprite-width)
+	 (divide-by sprite-width)
 	 int))
 
 (defn setup []
