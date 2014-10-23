@@ -14,12 +14,13 @@
 
   ; Setup function returns initial state
   (let [physics (.setWorldBounds (VerletPhysics.) (AABB. 400.0))
-        user1   (twitter-user/create "User 1" 10.0 10.0 0.0)
-        user2   (twitter-user/create "User 2" 30.0 -30.0 10.0)]
+        user1   (twitter-user/create "User 1"  50.0 -50.0    0.0)
+        user2   (twitter-user/create "User 2"   0.0   0.0   50.0)
+        user3   (twitter-user/create "User 3" -50.0  50.0  100.0) ]
     { :color 0
       :angle 0
       :physics physics
-      :users [ user1 user2 ] }))
+      :users [ user1 user2 user3 ] }))
 
 (defn update [state]
   ; Update sketch state by changing circle color and position.
