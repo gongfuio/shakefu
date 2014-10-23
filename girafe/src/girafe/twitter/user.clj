@@ -1,6 +1,7 @@
 (ns girafe.twitter.user
-  (:require [quil.core :as q])
-  (:import [toxi.geom Vec3D]))
+  (:require [quil.core :as q]
+            [clojure.string :refer [blank?]])
+  (:import  [toxi.geom Vec3D]))
 
 (def RADIUS 40.0)
 
@@ -19,5 +20,9 @@
         y (.y location)
         z (.z location)]
     (q/with-translation [x y z]
-      (q/sphere RADIUS)))
+      (q/sphere RADIUS))
+    (when-not (blank? name)
+      (q/text-size 24)
+      (q/text-align :left :center)
+      (q/text name (+ x RADIUS) y (* 2 RADIUS))))
   (q/pop-matrix))
