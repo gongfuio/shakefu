@@ -1,16 +1,23 @@
 (ns girafe.core
   (:require [quil.core :as q]
-            [quil.middleware :as m]))
+            [quil.middleware :as m])
+  (:import  [toxi.physics VerletPhysics]
+            [toxi.geom Vec3D AABB]))
 
 (defn setup []
   ; Set frame rate to 30 frames per second.
   (q/frame-rate 30)
   ; Set color mode to HSB (HSV) instead of default RGB.
   (q/color-mode :hsb)
+
+  (def world (VerletPhysics.))
+  (.setWorldBounds world (AABB. 400.0))
+
   ; setup function returns initial state. It contains
   ; circle color and position.
   {:color 0
-   :angle 0})
+   :angle 0
+   :world world })
 
 (defn update [state]
   ; Update sketch state by changing circle color and position.
