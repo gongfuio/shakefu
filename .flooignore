@@ -1,8 +1,9 @@
 #*
-*.o
-*.pyc
+**/*.o
+**/*.pyc
 *~
-extern/
-node_modules/
-tmp
-vendor/
+**/extern/
+**/node_modules/
+**/tmp
+**/vendor/
+**/target/
