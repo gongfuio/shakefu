@@ -1,9 +1,9 @@
 (ns girafe.core
   (:require [quil.core :as q]
             [quil.middleware :as m]
-            [girafe.twitter.user :as twitter-user])
-  (:import  [toxi.physics VerletPhysics]
-            [toxi.geom AABB]))
+            [girafe.twitter.user :as twitter-user]
+            [girafe.physics :as physics])
+  (:import  [toxi.physics VerletPhysics]))
 
 (defn setup []
   (q/frame-rate 24)
@@ -13,13 +13,13 @@
   (q/lights)
 
   ; Setup function returns initial state
-  (let [physics (.setWorldBounds (VerletPhysics.) (AABB. 400.0))
-        user1   (twitter-user/create "User 1"  50.0 -50.0    0.0)
-        user2   (twitter-user/create "User 2"   0.0   0.0   50.0)
-        user3   (twitter-user/create "User 3" -50.0  50.0  100.0) ]
+  (let [world (physics/create-world 500.0)
+        user1 (twitter-user/create "User 1"  50.0 -50.0    0.0)
+        user2 (twitter-user/create "User 2"   0.0   0.0   50.0)
+        user3 (twitter-user/create "User 3" -50.0  50.0  100.0) ]
     { :color 0
       :angle 0
-      :physics physics
+      :physics world
       :users [ user1 user2 user3 ] }))
 
 (defn update [state]
