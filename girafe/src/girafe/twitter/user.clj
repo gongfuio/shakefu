@@ -19,8 +19,10 @@
   (let [x (.x location)
         y (.y location)
         z (.z location)]
+    ; Display a sphere to represent a user
     (q/with-translation [x y z]
       (q/sphere RADIUS))
+    ; and its name next to it
     (when-not (blank? name)
       (q/text-size 24)
       (q/text-align :left :center)
