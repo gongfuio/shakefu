@@ -1,54 +1,51 @@
 (ns girafe.core
   (:require [quil.core :as q]
-            [quil.middleware :as m])
+            [quil.middleware :as m]
+            [girafe.twitter.user :as twitter-user])
   (:import  [toxi.physics VerletPhysics]
-            [toxi.geom Vec3D AABB]))
+            [toxi.geom AABB]))
 
 (defn setup []
-  ; Set frame rate to 30 frames per second.
-  (q/frame-rate 30)
-  ; Set color mode to HSB (HSV) instead of default RGB.
-  (q/color-mode :hsb)
+  (q/frame-rate 24)
+  (q/color-mode :rgb)
+  (q/sphere-detail 15)
+  (q/smooth)
+  (q/lights)
 
-  (def world (VerletPhysics.))
-  (.setWorldBounds world (AABB. 400.0))
-
-  ; setup function returns initial state. It contains
-  ; circle color and position.
-  {:color 0
-   :angle 0
-   :world world })
+  ; Setup function returns initial state
+  (let [physics (.setWorldBounds (VerletPhysics.) (AABB. 400.0))
+        user1   (twitter-user/create "User 1" 10.0 10.0 0.0)
+        user2   (twitter-user/create "User 2" 30.0 -30.0 10.0)]
+    { :color 0
+      :angle 0
+      :physics physics
+      :users [ user1 user2 ] }))
 
 (defn update [state]
   ; Update sketch state by changing circle color and position.
-  {:color (mod (+ (:color state) 0.7) 255)
-   :angle (+ (:angle state) 0.1)})
+  (assoc state
+    :color (mod (+ (:color state) 0.7) 255)
+    :angle (+ (:angle state) 0.1)))
 
 (defn draw [state]
   ; Clear the sketch by filling it with light-grey color.
-  (q/background 240)
-  ; Set circle color.
-  (q/fill (:color state) 255 255)
-  ; Calculate x and y coordinates of the circle.
-  (let [angle (:angle state)
-        x (* 150 (q/cos angle))
-        y (* 150 (q/sin angle))]
-    ; Move origin point to the center of the sketch.
-    (q/with-translation [(/ (q/width) 2)
-                         (/ (q/height) 2)]
-      ; Draw the circle.
-      (q/ellipse x y 100 100))))
+  (q/background 255)
+  (q/with-translation [(/ (q/width) 2)
+                       (/ (q/height) 2)]
+    ; Display the Twitter users
+    (doseq [usr (:users state)]
+      (twitter-user/display! usr))))
 
 (q/defsketch girafe
-  :title "You spin my circle right round"
+  :title "Soft-Shake Tweets"
   :size [500 500]
+  :renderer :p3d
   ; setup function called only once, during sketch initialization.
   :setup setup
   ; update is called on each iteration before draw is called.
   ; It updates sketch state.
   :update update
   :draw draw
-  ; This sketch uses functional-mode middleware.
-  ; Check quil wiki for more info about middlewares and particularly
-  ; fun-mode.
+  ; This sketch uses functional-mode middleware. Check quil wiki
+  ; for more info about middlewares and particularly fun-mode.
   :middleware [m/fun-mode])
