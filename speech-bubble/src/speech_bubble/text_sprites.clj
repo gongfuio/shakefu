@@ -2,20 +2,22 @@
 	(:require [quil.core :as q]))
 
 
+
+
 (defn draw-bubble
   "draws speech bubble shape"
-  [x y width height]
+  [x y width height tail-size]
   (q/with-translation [x y]
 	(let [half-w (/ width 2)
-		  tail-size 20]
+		  draw-height (- height tail-size)]
   		(q/begin-shape)
   		(q/vertex 0 0)
   		(q/vertex width 0)
-		(q/vertex width height)
-		(q/vertex (+ half-w tail-size) height)
-		(q/vertex half-w (+ height tail-size))
-		(q/vertex (- half-w tail-size) height)
-  		(q/vertex 0 height)
+		(q/vertex width draw-height)
+		(q/vertex (+ half-w tail-size) draw-height)
+		(q/vertex half-w (+ draw-height tail-size))
+		(q/vertex (- half-w tail-size) draw-height)
+  		(q/vertex 0 draw-height)
 	  	(q/end-shape :close))))
 
 (defn text-sprite
@@ -56,19 +58,21 @@
   !! bubble-height is speculative (must be guestimated higher than actual rendered text)"
   [text font font-size [bubble-width bubble-height :as texture-size]]
   (let [text-margin 20
+		tail-size 20 ; height in pixels of bubble tail
 		text-width (- bubble-width (* text-margin 2))
 		text-sprite (text-sprite text font font-size [text-width bubble-height])
 		text-height (text-height text-sprite)]
   {:bubble-width bubble-width
-   :bubble-height (+ text-height (* text-margin 2))
+   :bubble-height (+ text-height (* text-margin 2) tail-size)
    :text-margin 20
+   :tail-size tail-size
    :text-sprite text-sprite
    }))
 
 (defn draw-speech-sprite
   "draws a speech-sprite map"
-  [{:keys [bubble-width bubble-height text-margin text-sprite]}]
+  [{:keys [bubble-width bubble-height text-margin text-sprite tail-size]}]
   (q/fill 255)
   (q/no-stroke)
-  (draw-bubble 0 0 bubble-width bubble-height)
+  (draw-bubble 0 0 bubble-width bubble-height tail-size)
   (q/image text-sprite text-margin text-margin))
