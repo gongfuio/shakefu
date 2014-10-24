@@ -7,7 +7,7 @@
   ; Set frame rate to 30 frames per second.
   (q/frame-rate 30)
   ; Set color mode to HSB (HSV) instead of default RGB.
-  (q/color-mode :hsb)
+  ;(q/color-mode :hsb)
 
   (let [text "learning clojure is fun"
 		font (q/create-font "consolas" 18)  ; font-specified must be system available or in data folder
@@ -21,8 +21,13 @@
 (defn draw
   [{speech-sprite :speech-sprite}]
   (q/background 0)
-  (q/with-translation [100 200]
-  	(bubble/draw-speech-sprite speech-sprite)))
+  (q/with-translation [150 200]
+	(q/push-matrix)
+	(q/scale 1)
+  	(bubble/draw-speech-sprite speech-sprite)
+	(q/pop-matrix)
+	(q/fill 255 128 0)
+	(q/rect 0 0 1 10)))
 
 (q/defsketch speech-bubble
   :title "I daresay hello to you"

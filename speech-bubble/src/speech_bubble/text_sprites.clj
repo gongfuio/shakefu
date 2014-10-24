@@ -65,10 +65,13 @@
    :text-sprite text-sprite
    }))
 
+(defn half [value] (/ value 2))
+
 (defn draw-speech-sprite
   "draws a speech-sprite map"
   [{:keys [bubble-width bubble-height text-margin text-sprite tail-size]}]
   (q/fill 255)
   (q/no-stroke)
-  (draw-bubble 0 0 bubble-width bubble-height tail-size)
-  (q/image text-sprite text-margin text-margin))
+  (q/with-translation [(- (half bubble-width)) (- bubble-height)]
+  	(draw-bubble 0 0 bubble-width bubble-height tail-size)
+  	(q/image text-sprite text-margin text-margin)))
