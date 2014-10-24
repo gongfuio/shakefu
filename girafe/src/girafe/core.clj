@@ -2,6 +2,7 @@
   (:require [quil.core :as q]
             [quil.middleware :as m]
             [girafe.twitter.user :as twitter-user]
+            [girafe.twitter.message :as twitter-msg]
             [girafe.physics :as physics])
   (:import  [toxi.physics VerletPhysics]))
 
