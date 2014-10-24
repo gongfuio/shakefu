@@ -1,9 +1,6 @@
 (ns speech-bubble.text-sprites
 	(:require [quil.core :as q]))
 
-
-
-
 (defn draw-bubble
   "draws speech bubble shape"
   [x y width height tail-size]
@@ -33,7 +30,6 @@
 	   (q/fill 122) 			 	; text-color
 	   (q/text text 0 0 width height))
 	 sprite))
-
 
 (defn text-height
   "computes text height (pixels) given a PGraphics (sprite)
