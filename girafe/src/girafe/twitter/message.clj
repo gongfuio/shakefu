@@ -13,7 +13,7 @@
 	 (q/with-graphics sprite
 	   (q/text-font font)
 	   (q/text-size font-size)
-	   (q/text-leading font-size) 	; spacing between
+	   (q/text-leading font-size) 	; spacing between lines
 	   (q/fill 255) 			 	; text-color
 	   (q/text text 0 0 width height))
 	 sprite))
@@ -34,6 +34,14 @@
 	 (- pixel-count)
 	 (divide-by sprite-width)
 	 int)))
+
+;; Alternative possibility with the following; we need to estimate the number
+;; of text line drawn by (q/text ...) in that case, to get the text-height
+;;
+;; (defn line-height
+;;   "Returns the line height of the current font at its current size."
+;;   []
+;;   (+ (q/text-ascent) (q/text-descent)))
 
 (defn speech-sprite
   "return speech sprite map
