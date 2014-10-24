@@ -14,13 +14,15 @@
   (q/lights)
 
   ; Setup function returns initial state
-  (let [user1 (twitter-user/create "User 1"  100.0 -100.0    0.0)
-        user2 (twitter-user/create "User 2"    0.0    0.0 -100.0)
-        user3 (twitter-user/create "User 3" -100.0  100.0  150.0)
-        part1 (:particle user1)
-        part2 (:particle user2)
-        part3 (:particle user3)
-        world (physics/create-world 500.0)]
+  (let [font    (q/create-font "Consolas" 18)  ; font-specified must be system available or in data folder
+        user1   (twitter-user/create "User 1"  100.0 -100.0    0.0)
+        user2   (twitter-user/create "User 2"    0.0    0.0 -100.0)
+        user3   (twitter-user/create "User 3" -100.0  100.0  150.0)
+        bubble1 (twitter-msg/create "Learning Clojure is fun" font 18)
+        part1   (:particle user1)
+        part2   (:particle user2)
+        part3   (:particle user3)
+        world   (physics/create-world 500.0)]
     { :color 0
       :angle 0
       :physics (-> world
@@ -31,7 +33,8 @@
                    (physics/add-spring   part1 part2 250.0 0.0001)
                    (physics/add-spring   part1 part3 150.0 0.0001)
                    (physics/add-spring   part2 part3 100.0 0.0001))
-      :users [ user1 user2 user3 ] }))
+      :users [ user1 user2 user3 ]
+      :messages [ bubble1 ]}))
 
 (defn update [state]
   ; Within the physics engine, update all forces and particle positions accordingly
@@ -46,6 +49,8 @@
   (q/background 255)
   ; Display the Twitter users
   (q/with-translation [(/ (q/width) 2) (/ (q/height) 2)]
+    (doseq [msg (:messages state)]
+  	  (twitter-msg/draw-speech-sprite msg))
     (doseq [usr (:users state)]
       (twitter-user/display usr))))
 

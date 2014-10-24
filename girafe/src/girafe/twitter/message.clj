@@ -4,22 +4,6 @@
   subproject (speech-bubble/src/speech-bubble/text_sprites.clj)."
 	(:require [quil.core :as q]))
 
-(defn draw-bubble
-  "draws speech bubble shape"
-  [x y width height tail-size]
-  (q/with-translation [x y]
-	(let [half-w (/ width 2)
-		  draw-height (- height tail-size)]
-  		(q/begin-shape)
-  		(q/vertex 0 0)
-  		(q/vertex width 0)
-		(q/vertex width draw-height)
-		(q/vertex (+ half-w tail-size) draw-height)
-		(q/vertex half-w (+ draw-height tail-size))
-		(q/vertex (- half-w tail-size) draw-height)
-  		(q/vertex 0 draw-height)
-	  	(q/end-shape :close))))
-
 (defn text-sprite
   "creates a text sprite (PGraphics)
    text is rendered in the box (width/height)
@@ -30,7 +14,7 @@
 	   (q/text-font font)
 	   (q/text-size font-size)
 	   (q/text-leading font-size) 	; spacing between
-	   (q/fill 122) 			 	; text-color
+	   (q/fill 255) 			 	; text-color
 	   (q/text text 0 0 width height))
 	 sprite))
 
@@ -68,13 +52,44 @@
    :text-sprite text-sprite
    }))
 
+(defn create
+  "Given a PFont, font size and a text, calculate and return a map with the bubble
+  size and text metrics that can be drawn with `draw-speech-sprite`. Sample usage:
+
+      (message/create \"Learning Clojure is fun\"
+                      (q/create-font \"consolas\" 18) 30)"
+  [text font font-size]
+  (let [texture-size [200 600]]
+  	(speech-sprite text font font-size texture-size)))
+
+
+
+(defn draw-bubble
+  "draws speech bubble shape"
+  [x y width height tail-size]
+  (q/with-translation [x y]
+	(let [half-w (/ width 2)
+		  draw-height (- height tail-size)]
+  		(q/begin-shape)
+  		(q/vertex 0 0)
+  		(q/vertex width 0)
+		(q/vertex width draw-height)
+		(q/vertex (+ half-w tail-size) draw-height)
+		(q/vertex half-w (+ draw-height tail-size))
+		(q/vertex (- half-w tail-size) draw-height)
+  		(q/vertex 0 draw-height)
+	  	(q/end-shape :close))))
+
 (defn half [value] (/ value 2))
 
 (defn draw-speech-sprite
   "draws a speech-sprite map"
   [{:keys [bubble-width bubble-height text-margin text-sprite tail-size]}]
-  (q/fill 255)
+	(q/push-matrix)
+	(q/scale 1)
+  (q/fill 64 128 192)
   (q/no-stroke)
   (q/with-translation [(- (half bubble-width)) (- bubble-height)]
   	(draw-bubble 0 0 bubble-width bubble-height tail-size)
-  	(q/image text-sprite text-margin text-margin)))
+  	(q/image text-sprite text-margin text-margin))
+	(q/pop-matrix))
