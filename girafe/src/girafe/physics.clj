@@ -1,7 +1,7 @@
 (ns girafe.physics
   "Helper functions to interact with the Toxiclibs Physics engine
   that uses Verlet integration."
-  (:import  [toxi.physics VerletPhysics VerletSpring VerletParticle]
+  (:import  [toxi.physics VerletPhysics VerletParticle VerletSpring VerletMinDistanceSpring]
             [toxi.physics.behaviors GravityBehavior]
             [toxi.geom AABB Vec3D]))
 
@@ -32,6 +32,14 @@
   [^VerletPhysics physics ^VerletParticle particle1 ^VerletParticle particle2 len strength]
   (.addSpring physics
               (VerletSpring. particle1 particle2 len strength)))
+
+(defn ^VerletPhysics add-min-distance-spring
+  "Adds a spring to the physics world, connecting two particles in space. The string which
+  will only enforce its rest length if the current distance is less than its rest length.
+  The simulation takes particle weight into account."
+  [^VerletPhysics physics ^VerletParticle particle1 ^VerletParticle particle2 rest-len strength]
+  (.addSpring physics
+              (VerletMinDistanceSpring. particle1 particle2 rest-len strength)))
 
 (defn ^VerletPhysics update
   "Progresses the physics simulation by one time step and updates all forces

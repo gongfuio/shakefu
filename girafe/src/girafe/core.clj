@@ -15,13 +15,14 @@
 
   ; Setup function returns initial state
   (let [font    (q/create-font "Consolas" 18)  ; font-specified must be system available or in data folder
-        user1   (twitter-user/create "User 1"  100.0 -100.0    0.0)
-        user2   (twitter-user/create "User 2"    0.0    0.0 -100.0)
-        user3   (twitter-user/create "User 3" -100.0  100.0  150.0)
-        bubble1 (twitter-msg/create "Learning Clojure is fun" font 18)
+        user1   (twitter-user/create "User 1"  200.0 -200.0    0.0)
+        user2   (twitter-user/create "User 2"    0.0    0.0 -200.0)
+        user3   (twitter-user/create "User 3" -200.0  200.0  250.0)
+        bubble1 (twitter-msg/create "Learning Clojure is fun" font 18 200.0 -200.0 0.0)
         part1   (:particle user1)
         part2   (:particle user2)
         part3   (:particle user3)
+        part4   (:particle bubble1)
         world   (physics/create-world 500.0)]
     { :color 0
       :angle 0
@@ -30,9 +31,11 @@
                    (physics/add-particle part1)
                    (physics/add-particle part2)
                    (physics/add-particle part3)
-                   (physics/add-spring   part1 part2 250.0 0.0001)
+                   (physics/add-particle part4)
+                   (physics/add-spring   part1 part2 150.0 0.0001)
                    (physics/add-spring   part1 part3 150.0 0.0001)
-                   (physics/add-spring   part2 part3 100.0 0.0001))
+                   (physics/add-spring   part2 part3 150.0 0.0001)
+                   (physics/add-spring   part1 part4  40.0 0.0200))
       :users [ user1 user2 user3 ]
       :messages [ bubble1 ]}))
 
@@ -56,7 +59,7 @@
 
 (q/defsketch girafe
   :title "Soft-Shake Tweets"
-  :size [500 500]
+  :size [600 600]
   :renderer :p3d
   ; setup function called only once, during sketch initialization.
   :setup setup

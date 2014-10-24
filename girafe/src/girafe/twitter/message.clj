@@ -2,7 +2,9 @@
   "Functions to display speech bubbles containing the text content
   of tweets. The source hereafter is a copy of David's speech-bubble
   subproject (speech-bubble/src/speech-bubble/text_sprites.clj)."
-	(:require [quil.core :as q]))
+	(:require [quil.core :as q])
+  (:import  [toxi.physics VerletParticle]
+            [toxi.geom Vec3D]))
 
 (defn text-sprite
   "creates a text sprite (PGraphics)
@@ -66,38 +68,42 @@
 
       (message/create \"Learning Clojure is fun\"
                       (q/create-font \"consolas\" 18) 30)"
-  [text font font-size]
-  (let [texture-size [200 600]]
-  	(speech-sprite text font font-size texture-size)))
-
-
-
-(defn draw-bubble
-  "draws speech bubble shape"
-  [x y width height tail-size]
-  (q/with-translation [x y]
-	(let [half-w (/ width 2)
-		  draw-height (- height tail-size)]
-  		(q/begin-shape)
-  		(q/vertex 0 0)
-  		(q/vertex width 0)
-		(q/vertex width draw-height)
-		(q/vertex (+ half-w tail-size) draw-height)
-		(q/vertex half-w (+ draw-height tail-size))
-		(q/vertex (- half-w tail-size) draw-height)
-  		(q/vertex 0 draw-height)
-	  	(q/end-shape :close))))
+  [text font font-size x y z]
+  (let [location (Vec3D. x y z)
+        texture-size [200 600]]
+  	{ :particle (VerletParticle. location)
+      :sprite (speech-sprite text font font-size texture-size) }))
 
 (defn half [value] (/ value 2))
 
+(defn draw-bubble
+  "draws speech bubble shape"
+  [width height tail-size]
+    (let [half-w (/ width 2)
+          draw-height (- height tail-size)]
+      (q/begin-shape)
+      (q/vertex 0 0)
+      (q/vertex width 0)
+      (q/vertex width draw-height)
+      (q/vertex (+ half-w tail-size) draw-height)
+      (q/vertex half-w (+ draw-height tail-size))
+      (q/vertex (- half-w tail-size) draw-height)
+      (q/vertex 0 draw-height)
+      (q/end-shape :close)))
+
 (defn draw-speech-sprite
   "draws a speech-sprite map"
-  [{:keys [bubble-width bubble-height text-margin text-sprite tail-size]}]
-	(q/push-matrix)
-	(q/scale 1)
-  (q/fill 64 128 192)
-  (q/no-stroke)
-  (q/with-translation [(- (half bubble-width)) (- bubble-height)]
-  	(draw-bubble 0 0 bubble-width bubble-height tail-size)
-  	(q/image text-sprite text-margin text-margin))
-	(q/pop-matrix))
+  [{:keys [sprite particle]}]
+  (let [{:keys [bubble-width bubble-height text-margin text-sprite tail-size]} sprite
+        x (.x particle)
+        y (.y particle)
+        z (.z particle)]
+    (q/push-matrix)
+    (q/scale 1)
+    (q/fill 64 128 192)
+    (q/no-stroke)
+    (q/with-translation [x y z]
+      (q/with-translation [(- (half bubble-width)) (- bubble-height)]
+        (draw-bubble bubble-width bubble-height tail-size)
+        (q/image text-sprite text-margin text-margin)))
+    (q/pop-matrix)))
